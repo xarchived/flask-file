@@ -8,16 +8,16 @@ from flask import Flask, Blueprint, request, send_file
 class File(object):
     _app: Union[Flask, Blueprint]
 
-    def __init__(self, app: Union[Flask, Blueprint] = None):
+    def __init__(self, app: Union[Flask, Blueprint] = None, directory: str = 'files'):
         if app is not None:
-            self.init_app(app)
+            self.init_app(app, directory)
 
-    def init_app(self, app: Union[Flask, Blueprint]) -> None:
+    def init_app(self, app: Union[Flask, Blueprint], directory: str) -> None:
         self._app = app
-        self.enhance(app)
+        self.enhance(app, directory)
 
     @staticmethod
-    def enhance(app: Union[Flask, Blueprint]) -> None:
+    def enhance(app: Union[Flask, Blueprint], directory: str) -> None:
         @app.route('/file/upload', methods=['POST'])
         def upload():
             if 'file' not in request.files:
@@ -25,7 +25,7 @@ class File(object):
 
             file = request.files['file']
             file_id = int.from_bytes(urandom(13), byteorder='little')
-            file_path = f'files/{file_id}'
+            file_path = f'{directory}/{file_id}'
 
             if file:
                 info = {
@@ -43,7 +43,7 @@ class File(object):
 
         @app.route('/file/download/<int:file_id>')
         def download(file_id: int):
-            file_path = f'files/{file_id}'
+            file_path = f'{directory}/{file_id}'
             with open(file_path + '.json') as f:
                 info = json.load(f)
 
