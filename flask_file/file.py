@@ -18,7 +18,7 @@ class File(object):
 
     @staticmethod
     def enhance(app: Union[Flask, Blueprint]) -> None:
-        @app.route('/upload', methods=['POST'])
+        @app.route('/file/upload', methods=['POST'])
         def upload():
             if 'file' not in request.files:
                 raise TypeError('No file part')
@@ -41,7 +41,7 @@ class File(object):
 
             return str(file_id)
 
-        @app.route('/download/<int:file_id>')
+        @app.route('/file/download/<int:file_id>')
         def download(file_id: int):
             file_path = f'files/{file_id}'
             with open(file_path + '.json') as f:
