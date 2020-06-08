@@ -2,22 +2,22 @@ import json
 from os import urandom
 from typing import Union
 
-from flask import Flask, Blueprint, request, send_file
+from flask import Flask, Blueprint, request, send_file, current_app
 
 
 class File(object):
     _app: Union[Flask, Blueprint]
 
-    def __init__(self, app: Union[Flask, Blueprint] = None, directory: str = 'files'):
+    def __init__(self, app: Union[Flask, Blueprint] = None):
         if app is not None:
-            self.init_app(app, directory)
+            self.init_app(app)
 
-    def init_app(self, app: Union[Flask, Blueprint], directory: str) -> None:
+    def init_app(self, app: Union[Flask, Blueprint]) -> None:
         self._app = app
-        self.enhance(app, directory)
+        self.enhance(app)
 
     @staticmethod
-    def enhance(app: Union[Flask, Blueprint], directory: str) -> None:
+    def enhance(app: Union[Flask, Blueprint]) -> None:
         @app.route('/file/upload', methods=['POST'])
         def upload():
             if 'file' not in request.files:
@@ -25,7 +25,7 @@ class File(object):
 
             file = request.files['file']
             file_id = int.from_bytes(urandom(13), byteorder='little')
-            file_path = f'{directory}/{file_id}'
+            file_path = f'{current_app.config["FILES_DIRECTORY"]}/{file_id}'
 
             if file:
                 info = {
@@ -43,7 +43,7 @@ class File(object):
 
         @app.route('/file/download/<int:file_id>')
         def download(file_id: int):
-            file_path = f'{directory}/{file_id}'
+            file_path = f'{current_app.config["FILES_DIRECTORY"]}/{file_id}'
             with open(file_path + '.json') as f:
                 info = json.load(f)
 
