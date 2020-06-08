@@ -37,7 +37,7 @@ class File(object):
                 with open(file_path + '.json', 'w') as f:
                     json.dump(info, f, ensure_ascii=True)
 
-                file.save(file_path)
+                file.save(file_path + '.data')
 
             return str(file_id)
 
@@ -47,4 +47,4 @@ class File(object):
             with open(file_path + '.json') as f:
                 info = json.load(f)
 
-            return send_file(file_path, as_attachment=True, attachment_filename=info['filename'])
+            return send_file(file_path + '.data', as_attachment=True, attachment_filename=info['filename'])
