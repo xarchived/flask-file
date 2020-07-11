@@ -41,7 +41,7 @@ class File(object):
 
             return str(file_id)
 
-        @app.route('/file/download/<int:file_id>')
+        @app.route('/file/<int:file_id>')
         def download(file_id: int):
             file_path = f'{current_app.config["FILES_DIRECTORY"]}/{file_id}'
             with open(file_path + '.json') as f:
