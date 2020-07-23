@@ -4,6 +4,8 @@ from typing import Union
 
 from flask import Flask, Blueprint, request, send_file, current_app
 
+from flask_file.exceptions import *
+
 
 class File(object):
     _app: Union[Flask, Blueprint]
@@ -44,7 +46,10 @@ class File(object):
         @app.route('/file/<int:file_id>')
         def download(file_id: int):
             file_path = f'{current_app.config["FILES_DIRECTORY"]}/{file_id}'
-            with open(file_path + '.json') as f:
-                info = json.load(f)
+            try:
+                with open(file_path + '.json') as f:
+                    info = json.load(f)
+            except FileNotFoundError:
+                raise FileNotFound(f'File not found (id={file_id})')
 
             return send_file(file_path + '.data', as_attachment=True, attachment_filename=info['filename'])
