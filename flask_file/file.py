@@ -23,7 +23,7 @@ class File(object):
         @app.route('/file/upload', methods=['POST'])
         def upload():
             if 'file' not in request.files:
-                raise TypeError('No file part')
+                raise FileNotProvided(f'File not provided (files={request.files})')
 
             file = request.files['file']
             file_id = int.from_bytes(urandom(13), byteorder='little')
