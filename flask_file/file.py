@@ -2,7 +2,7 @@ import json
 from os import urandom
 from typing import Union
 
-from flask import Flask, Blueprint, request, send_file, current_app
+from flask import Flask, Blueprint, request, send_file, current_app, jsonify
 
 from flask_file.exceptions import *
 
@@ -41,7 +41,7 @@ class File(object):
 
                 file.save(file_path + '.data')
 
-            return str(file_id)
+            return jsonify(file_id=str(file_id))
 
         @app.route('/file/<int:file_id>')
         def download(file_id: int):
